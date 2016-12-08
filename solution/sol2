@@ -1,0 +1,17 @@
+    T pop_back() {
+        if (size() == 0) {
+            throw container_empty();
+        }
+        _size--;
+        return elements[size()];
+    }
+
+	void clear() {
+        delete[] elements;
+        elements = new T[capacity];
+        _size = 0;
+    }
+
+};
+
+#endif // SOLUTION_H

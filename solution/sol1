@@ -1,0 +1,34 @@
+#ifndef SOLUTION_H
+#define SOLUTION_H
+
+#include <stdexcept>
+#include <cstddef>
+
+using namespace std;
+
+class container_empty { };
+
+template <typename T>
+class Array {
+
+private:
+    T* elements;
+    size_t _size;
+    size_t capacity;
+
+public:
+    Array() : elements(nullptr), _size(0), capacity(4) {
+        elements = new T[capacity];
+    }
+
+	size_t size() const { return _size; }
+
+	bool empty() const { return size() == 0; }
+
+	T at(const size_t index) const  {
+        if (index >= size()) {
+            throw out_of_range("");
+        }
+        return elements[index];
+    }
+

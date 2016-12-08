@@ -1,0 +1,14 @@
+    void push_back(const T& element) {
+        size_t new_size = size() + 1;
+        if (new_size > capacity) {
+            capacity *= 2;
+            T* new_elements = new T[capacity];
+            for (size_t i = 0; i < size(); i++) {
+                new_elements[i] = elements[i];
+            }
+            delete[] elements;
+            elements = new_elements;
+        }
+        elements[_size++] = element;
+    }
+

@@ -1,0 +1,24 @@
+void push_back(const T& element) {
+    if (should_grow()) {
+        grow();
+    }
+    do_push_back(element);
+}
+
+bool should_grow() const {
+    return size() + 1 > capacity;
+}
+
+void grow() {
+    capacity *= 2;
+    T* new_elements = new T[capacity];
+    for (size_t i = 0; i < size(); i++) {
+        new_elements[i] = elements[i];
+    }
+    delete[] elements;
+    elements = new_elements;
+}
+
+void do_push_back(const T& element) {
+    elements[_size++] = element;
+}

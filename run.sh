@@ -8,4 +8,3 @@ make -s -j 4 || exit
 ./main
 
 # make -s clean
-[ -f include/solution.h ] && rm -f include/solution.h

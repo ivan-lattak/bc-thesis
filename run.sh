@@ -3,9 +3,9 @@
 [ -d include ] || mkdir include
 cat solution/sol1 from_browser solution/sol2 > include/solution.h
 
-make -s -j 4
+make -s -j 4 || exit
 
 ./main
 
 # make -s clean
-# [ -f include/solution.h ] && rm -f include/solution.h
+[ -f include/solution.h ] && rm -f include/solution.h

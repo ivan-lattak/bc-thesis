@@ -1,0 +1,10 @@
+# C/C++ object and library files
+*.o
+*.a
+
+# executable files
+*.exe
+
+# files that change over time
+from_browser
+include/solution.h

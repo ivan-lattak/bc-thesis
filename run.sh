@@ -1,18 +1,13 @@
 #!/bin/bash
 
-PATH=$PATH:/usr/bin
-
 cleanup() {
 	killall sleep
-	# make -s clean
-	exit
+	make -s clean
+	exit 0
 }
 
-[ -d include ] || mkdir include
-cat solution/sol1 from_browser solution/sol2 > include/solution.h
-
-#make -s -j4 || exit
+make -s -j4 || exit 1
 
 (./main ; cleanup) & pid=$!
 (sleep 10 && kill $pid && echo TLE)
-
+exit 1

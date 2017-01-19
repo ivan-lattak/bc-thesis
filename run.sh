@@ -10,4 +10,4 @@ make -s -j4 || exit 1
 
 (./main ; cleanup) & pid=$!
 (sleep 10 && kill $pid && echo TLE)
-exit 1
+exit 2

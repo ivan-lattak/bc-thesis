@@ -21,11 +21,11 @@ public:
         elements = new T[capacity];
     }
 
-	size_t size() const { return _size; }
+    size_t size() const { return _size; }
 
-	bool empty() const { return size() == 0; }
+    bool empty() const { return size() == 0; }
 
-	T at(const size_t index) const  {
+    T at(const size_t index) const  {
         if (index >= size()) {
             throw out_of_range("");
         }
@@ -40,7 +40,7 @@ public:
         return elements[size()];
     }
 
-	void clear() {
+    void clear() {
         delete[] elements;
         elements = new T[capacity];
         _size = 0;

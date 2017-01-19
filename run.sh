@@ -6,6 +6,8 @@ cleanup() {
 	exit 0
 }
 
+cd "$(dirname "$0")"
+
 make -s -j4 || exit 1
 
 (./main ; cleanup) & pid=$!

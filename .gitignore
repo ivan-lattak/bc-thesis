@@ -1,9 +1,16 @@
-# C/C++ object and library files
+# C/C++ object files
 *.o
+
+# C/C++ static library files
 *.a
 
-# executable files
+# executable filesa
 *.exe
+*.out
+
+# python compiled files
+*.pyc
+*/__pycache__/*
 
 # files that change over time
-refactoring/exercise/include/solution.h
+refactoring/exercise/include/*

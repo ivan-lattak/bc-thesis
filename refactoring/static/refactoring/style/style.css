@@ -1,0 +1,11 @@
+body {
+    font-family: "Arial";
+}
+
+textarea {
+    font-family: "Consolas";
+}
+
+#output  {
+    font-family: "Consolas";
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Refactoring exercises</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'refactoring/style/style.css' %}?v=1.0">
+
+    <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<section>
+    <h1>Refaktorizačné cvičenie č. 1</h1>
+    <p>Toto je úryvok z kódu, ktorý v C++ implementuje random-access zoznam
+    pomocou C-čkovských polí, kontroluje pretečenie a sám sa nafukuje.</p>
+    <p>Vidíte metódu 'push_back', ktorá zoberie prvok a vloží ho na koniec
+    zoznamu. Nie je veľmi dobre čitateľná. Refaktorizujte ju tak, aby sa
+    dala ľahšie čítať.</p>
+    <p>Kód nesmie zmeniť funkcionalitu, ktorá je testovaná jednotkovými
+    testami. Tie môžete vidieť napravo.</p>
+</section>
+
+<form method="post">
+{% csrf_token %}
+{{ form }}
+<br>
+<input type="submit" name="submit" value="Compile and Run">
+<input type="submit" name="reset" value="Reset">
+</form>
+{% if output is not None %}
+
+<section id="output">
+<p>{{ output|linebreaks }}</p>
+</section>
+{% endif %}
+</body>
+</html>

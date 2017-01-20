@@ -6,5 +6,4 @@
 *.exe
 
 # files that change over time
-from_browser
-include/solution.h
+refactoring/exercise/include/solution.h

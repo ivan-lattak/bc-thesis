@@ -8,9 +8,12 @@
 *.exe
 *.out
 
-# python compiled files
+# Python compiled files
 *.pyc
 */__pycache__/*
+
+# PyCharm project files
+.idea/*
 
 # files that change over time
 refactoring/exercise/include/*

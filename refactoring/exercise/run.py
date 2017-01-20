@@ -2,7 +2,9 @@
 
 import os
 import sys
-from subprocess import DEVNULL, CalledProcessError, call, check_call
+from subprocess import DEVNULL, \
+                       CalledProcessError, TimeoutExpired, \
+                       call, check_call
 
 _RETURN_DIR = None
 

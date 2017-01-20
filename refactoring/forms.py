@@ -1,7 +1,10 @@
 import os
-from subprocess import check_output, STDOUT, CalledProcessError
+from subprocess import DEVNULL, STDOUT, \
+                       CalledProcessError, \
+                       check_output
 
 from django import forms
+from django.conf import settings
 
 from .util import file_read, file_write, ORIGINAL, TESTS, CODE, RUN_SCRIPT
 
@@ -28,6 +31,8 @@ class RefactoringForm(forms.Form):
         file_write(CODE, self.cleaned_data['code'])
 
         try:
-            return check_output(RUN_SCRIPT, stderr=STDOUT)
+            if settings.DEBUG:
+                return check_output(RUN_SCRIPT, stderr=STDOUT)
+            return check_output(RUN_SCRIPT)
         except CalledProcessError as e:
             return "ERROR, error code = {}\n".format(e.returncode) + e.output.decode('utf-8')

@@ -4,7 +4,7 @@
 # C/C++ static library files
 *.a
 
-# executable filesa
+# executable files
 *.exe
 *.out
 
@@ -14,6 +14,9 @@
 
 # PyCharm project files
 .idea/*
+
+# ViM files
+*.swp
 
 # files that change over time
 refactoring/exercise/include/*

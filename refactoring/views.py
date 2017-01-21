@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 from .forms import RefactoringForm, RegisterForm
 
@@ -11,6 +12,7 @@ def _form_submitted(request):
     return request.method == 'POST' and 'reset' not in request.POST
 
 
+@login_required
 def index(request):
     form = RefactoringForm()
     output = None

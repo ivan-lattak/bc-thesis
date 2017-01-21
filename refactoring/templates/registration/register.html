@@ -1,24 +1,13 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
-<html lang="en">
-<head>
-    <meta charset="utf-8">
+{% block title %}Registration{% endblock %}
 
-    <title>Registration</title>
+{% block stylesheet%}{% static 'refactoring/style/register.css' %}{% endblock %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'refactoring/style/register.css' %}">
-
-    <!--[if lt IE 9]>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
-    <![endif]-->
-</head>
-
-<body>
+{% block content %}
 <form method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     <input type="submit" value="Register">
 </form>
-</body>
-</html>
+{% endblock %}

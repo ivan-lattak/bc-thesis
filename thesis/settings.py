@@ -127,6 +127,6 @@ STATIC_URL = '/refactoring/static/'
 
 # Default user login and redirect URL
 
-LOGIN_URL = '/refactoring/login/'
+LOGIN_URL = '/refactoring/auth/login/'
 
 LOGIN_REDIRECT_URL = '/refactoring/'

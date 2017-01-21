@@ -39,7 +39,8 @@ class RefactoringForm(forms.Form):
             return "ERROR, error code = {}\n".format(e.returncode) + e.output.decode('utf-8')
 
 
-class UserForm(forms.ModelForm):
+class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
+        widgets = {'password': forms.PasswordInput}

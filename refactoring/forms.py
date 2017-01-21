@@ -5,6 +5,7 @@ from subprocess import DEVNULL, STDOUT, \
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from .util import file_read, file_write, ORIGINAL, TESTS, CODE, RUN_SCRIPT
 
@@ -36,3 +37,9 @@ class RefactoringForm(forms.Form):
             return check_output(RUN_SCRIPT)
         except CalledProcessError as e:
             return "ERROR, error code = {}\n".format(e.returncode) + e.output.decode('utf-8')
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')

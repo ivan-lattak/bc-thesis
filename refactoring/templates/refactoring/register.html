@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html lang="">
+<head>
+    <meta charset="utf-8">
+
+    <title>Registration</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'refactoring/style/register.css' %}">
+
+    <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Create new user account" />
+</form>
+</body>
+</html>

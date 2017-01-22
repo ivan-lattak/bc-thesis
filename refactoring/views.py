@@ -4,7 +4,7 @@ from subprocess import (
 )
 
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -43,6 +43,11 @@ def _original_tests():
 
 @login_required
 def index(request):
+    return HttpResponse("Welcome to the index.")
+
+
+@login_required
+def detail(request, exercise_id):
     form = RefactoringForm(initial = {
         'code': _original_code(),
         'tests': _original_tests(),
@@ -56,7 +61,7 @@ def index(request):
 
     return render(
         request,
-        'refactoring/index.html',
+        'refactoring/detail.html',
         {
             'form': form, 
             'output': output,

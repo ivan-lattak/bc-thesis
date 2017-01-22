@@ -1,20 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Refactoring exercises{% endblock %}
+{% block title %}Cvičenie č. {{ exercise_id }}{% endblock %}
 
 {% block stylesheet %}{% static 'refactoring/style/detail.css' %}{% endblock %}
 
 {% block content %}
 <section>
-    <h1>Refaktorizačné cvičenie č. 1</h1>
-    <p>Toto je úryvok z kódu, ktorý v C++ implementuje random-access zoznam
-    pomocou C-čkovských polí, kontroluje pretečenie a sám sa nafukuje.</p>
-    <p>Vidíte metódu 'push_back', ktorá zoberie prvok a vloží ho na koniec
-    zoznamu. Nie je veľmi dobre čitateľná. Refaktorizujte ju tak, aby sa
-    dala ľahšie čítať.</p>
-    <p>Kód nesmie zmeniť funkcionalitu, ktorá je testovaná jednotkovými
-    testami. Tie môžete vidieť napravo.</p>
+    <h1>Refaktorizačné cvičenie č. {{ exercise_id }}</h1>
+    {{ exercise_text|linebreaks }}
 </section>
 
 <form method="post">
@@ -27,7 +21,7 @@
 {% if output is not None %}
 
 <section id="output">
-<p>{{ output|linebreaks }}</p>
+<p>{{ output|linebreaksbr }}</p>
 </section>
 {% endif %}
 {% endblock %}

@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Refactoring exercises{% endblock %}
 
-{% block stylesheet %}static/refactoring/style/index.css{% endblock %}
+{% block stylesheet %}{% static 'refactoring/style/detail.css' %}{% endblock %}
 
 {% block content %}
 <section>

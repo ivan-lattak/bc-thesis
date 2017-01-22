@@ -10,7 +10,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from .util import file_write, CODE, RUN_SCRIPT
+from .util import file_read, file_write, ORIGINAL, TESTS, CODE, RUN_SCRIPT
 from .forms import RefactoringForm, RegisterForm
 
 
@@ -33,9 +33,20 @@ def _execute(form):
         return "ERROR, return code = {}\n".format(e.returncode) + e.output.decode('utf-8')
 
 
+def _original_code():
+    return file_read(ORIGINAL)
+
+
+def _original_tests():
+    return file_read(TESTS)
+
+
 @login_required
 def index(request):
-    form = RefactoringForm()
+    form = RefactoringForm(initial = {
+        'code': _original_code(),
+        'tests': _original_tests(),
+    })
     output = None
 
     if _form_submitted(request):

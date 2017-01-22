@@ -18,5 +18,5 @@
 # ViM files
 *.swp
 
-# files that change over time
-refactoring/exercise/include/*
+# user-created content
+refactoring/exercises/*

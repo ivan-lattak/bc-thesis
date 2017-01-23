@@ -1,4 +1,5 @@
 import os
+import sys
 from subprocess import (
     DEVNULL, STDOUT, CalledProcessError, check_output
 )
@@ -14,6 +15,8 @@ from django.contrib.auth.decorators import login_required
 from .util import file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER, ExercisePaths
 from .forms import RefactoringForm, RegisterForm
 from .models import Exercise
+
+sys.dont_write_bytecode = True # prevent creation of __pycache__ in exercise_common
 from .exercise_common import run
 
 

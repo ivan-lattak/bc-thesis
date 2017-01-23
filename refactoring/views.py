@@ -11,10 +11,11 @@ from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 from .util import file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER, ExercisePaths
 from .forms import RefactoringForm, RegisterForm
-from .models import Exercise
+from .models import Exercise, Solution
 
 sys.dont_write_bytecode = True # prevent creation of __pycache__ in exercise_common
 from .exercise_common import run
@@ -66,6 +67,16 @@ def _parse_error_code(error_code, output):
                "----- TIME LIMIT EXCEEDED -----"
 
 
+def _save_solution(code, creator, exercise):
+    solution = Solution.objects.create(
+            code=code,
+            sub_date=timezone.now(),
+            creator=creator,
+            exercise=exercise,
+    )
+    solution.save()
+
+
 def _execute_exercise(form, ep):
     _prepare_exercise_dir(form, ep)
 
@@ -78,7 +89,8 @@ def _execute_exercise(form, ep):
         output = e.output.decode('utf-8')
         error_code = e.returncode
 
-    return _parse_error_code(error_code, output)
+    ok = error_code == run.OK
+    return ok, _parse_error_code(error_code, output)
 
 
 def _original_code(exercise):
@@ -123,7 +135,9 @@ def detail(request, exercise_id):
         })
         if form.is_valid():
             ep = ExercisePaths(request.user.username, exercise_id)
-            output = _execute_exercise(form, ep)
+            ok, output = _execute_exercise(form, ep)
+            if ok:
+                _save_solution(form.cleaned_data['code'], request.user, exercise)
 
     return render(
         request,

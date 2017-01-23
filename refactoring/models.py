@@ -22,3 +22,13 @@ class TestCase(models.Model):
     def __str__(self):
         case_name = TestCase.matcher.match(self.code).group(0)
         return "TestCase {} of exercise {}".format(case_name, self.exercise.id)
+
+
+class Solution(models.Model):
+    code = models.TextField()
+    sub_date = models.DateTimeField('date submitted')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+
+    def __str__(self):
+       return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(self.sub_date)

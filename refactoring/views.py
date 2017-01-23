@@ -1,6 +1,6 @@
 import os
 from subprocess import (
-    STDOUT, CalledProcessError, check_output
+    DEVNULL, STDOUT, CalledProcessError, check_output
 )
 from operator import attrgetter
 
@@ -14,23 +14,24 @@ from django.contrib.auth.decorators import login_required
 from .util import file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER, ExercisePaths
 from .forms import RefactoringForm, RegisterForm
 from .models import Exercise
+from .exercise_common import run
 
 
 def _form_submitted(request):
     return request.method == 'POST' and 'reset' not in request.POST
 
 
-def _prepare_exercise_dir(exercise_dir):
+def _copy_common_files(exercise_dir):
     for item in os.listdir(COMMON_DIR):
         src_abspath = os.path.join(COMMON_DIR, item)
         dst_abspath = os.path.join(exercise_dir, item)
         copy_anything(src_abspath, dst_abspath)
 
 
-def _execute_exercise(form, ep):
+def _prepare_exercise_dir(form, ep):
     try:
         os.makedirs(ep.exercise_dir())
-        _prepare_exercise_dir(ep.exercise_dir())
+        _copy_common_files(ep.exercise_dir())
     except FileExistsError:
         pass
 
@@ -38,12 +39,43 @@ def _execute_exercise(form, ep):
     file_write(ep.code_file(), form.cleaned_data['code'])
     file_write(ep.tests_file(), form.cleaned_data['tests'])
 
+
+def _parse_error_code(error_code, output):
+    if error_code == run.OK:
+        return "SUCCESS\n\n" + \
+               "----- BEGIN OUTPUT -----\n" + \
+               output + \
+               "----- END OUTPUT -----"
+    elif error_code == run.COMPILATION_FAILED:
+        return "ERROR: The program failed to compile\n\n" + \
+               "----- BEGIN OUTPUT -----\n" + \
+               output + \
+               "----- END OUTPUT -----"
+    elif error_code == run.EXCEPTION:
+        return "ERROR: Errors occurred during program execution\n\n" + \
+               "----- BEGIN OUTPUT -----\n" + \
+               output + \
+               "----- END OUTPUT -----"
+    elif error_code == run.TIME_LIMIT_EXCEEDED:
+        return "ERROR: Time limit exceeded during execution\n\n" + \
+               "----- BEGIN OUTPUT -----\n" + \
+               output + \
+               "----- TIME LIMIT EXCEEDED -----"
+
+
+def _execute_exercise(form, ep):
+    _prepare_exercise_dir(form, ep)
+
+    err_output = STDOUT if settings.DEBUG else DEVNULL
+
     try:
-        if settings.DEBUG:
-            return check_output(ep.run_script(), stderr=STDOUT)
-        return check_output(ep.run_script())
+        output = check_output(ep.run_script(), stderr=err_output).decode('utf-8')
+        error_code = run.OK
     except CalledProcessError as e:
-        return "ERROR, return code = {}\n".format(e.returncode) + e.output.decode('utf-8')
+        output = e.output.decode('utf-8')
+        error_code = e.returncode
+
+    return _parse_error_code(error_code, output)
 
 
 def _original_code(exercise):

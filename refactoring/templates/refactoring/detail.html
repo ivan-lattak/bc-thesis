@@ -11,12 +11,25 @@
     {{ exercise_text|linebreaks }}
 </section>
 
+<p>Vyberte si predchádzajúce riešenie:</p>
+<form method="get">
+<select name="solution">
+{% if solutions %}
+  {% for solution in solutions %}
+    <option value="{{ solution.id }}"{% if solution == selected %} selected{% endif %}>{{ solution }}</option>
+  {% endfor %}
+{% else %}
+  <option>(No solutions yet)</option>
+{% endif %}
+</select>
+<button type="submit"{% if not solutions %} disabled{% endif %}>Choose solution</button>
+</form>
+
 <form method="post">
 {% csrf_token %}
 {{ form }}
 <br>
-<input type="submit" name="submit" value="Compile and Run">
-<input type="submit" name="reset" value="Reset">
+<input type="submit" name="compileandrun" value="Compile and Run">
 </form>
 {% if output is not None %}
 

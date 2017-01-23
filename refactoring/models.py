@@ -31,4 +31,10 @@ class Solution(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
 
     def __str__(self):
-       return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(self.sub_date)
+        return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(self.sub_date)
+
+    def __eq__(self, other):
+        return isinstance(other, Solution) and self.id is other.id
+
+    class Meta:
+        unique_together = ('code', 'creator', 'exercise')

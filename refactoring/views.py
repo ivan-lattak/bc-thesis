@@ -12,6 +12,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.db import IntegrityError
 
 from .util import file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER, ExercisePaths
 from .forms import RefactoringForm, RegisterForm
@@ -21,8 +22,8 @@ sys.dont_write_bytecode = True # prevent creation of __pycache__ in exercise_com
 from .exercise_common import run
 
 
-def _form_submitted(request):
-    return request.method == 'POST' and 'reset' not in request.POST
+def _refactoring_form_submitted(request):
+    return request.method == 'POST' and 'compileandrun' in request.POST
 
 
 def _copy_common_files(exercise_dir):
@@ -68,13 +69,16 @@ def _parse_error_code(error_code, output):
 
 
 def _save_solution(code, creator, exercise):
-    solution = Solution.objects.create(
-            code=code,
-            sub_date=timezone.now(),
-            creator=creator,
-            exercise=exercise,
-    )
-    solution.save()
+    try:
+        solution = Solution.objects.create(
+                code=code,
+                sub_date=timezone.now(),
+                creator=creator,
+                exercise=exercise,
+        )
+        solution.save()
+    except IntegrityError:
+        pass
 
 
 def _execute_exercise(form, ep):
@@ -111,6 +115,18 @@ def _all_tests(exercise):
     return _original_tests(exercise) + '\n\n' + _user_tests(exercise)
 
 
+def _user_solutions(exercise, user):
+    return exercise.solution_set.filter(creator=user).order_by('-sub_date')
+
+
+def _latest_solution(solutions):
+    return solutions.first()
+
+
+def _solution_selected(request):
+    return request.method == 'GET' and 'solution' in request.GET
+
+
 @login_required
 def index(request):
     return HttpResponse("Welcome to the index.")
@@ -119,25 +135,33 @@ def index(request):
 @login_required
 def detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
-    original_code = _original_code(exercise)
-    original_tests = _all_tests(exercise)
+    solutions = _user_solutions(exercise, request.user)
+    if _solution_selected(request):
+        selected = get_object_or_404(Solution, id=request.GET['solution'])
+    else:
+        selected = _latest_solution(solutions)
+
+    initial_code = selected.code if selected else _original_code(exercise)
+    initial_tests = _all_tests(exercise)
 
     form = RefactoringForm(initial={
-        'code': original_code,
-        'tests': original_tests,
+        'code': initial_code,
+        'tests': initial_tests,
     })
     output = None
 
-    if _form_submitted(request):
+    if _refactoring_form_submitted(request):
         form = RefactoringForm(request.POST, initial={
-            'code': original_code,
-            'tests': original_tests,
+            'code': initial_code,
+            'tests': initial_tests,
         })
         if form.is_valid():
             ep = ExercisePaths(request.user.username, exercise_id)
-            ok, output = _execute_exercise(form, ep)
-            if ok:
+            execution_ok, output = _execute_exercise(form, ep)
+            if execution_ok:
                 _save_solution(form.cleaned_data['code'], request.user, exercise)
+                solutions = _user_solutions(exercise, request.user)
+                selected = _latest_solution(solutions)
 
     return render(
         request,
@@ -145,6 +169,8 @@ def detail(request, exercise_id):
         {
             'exercise_id': exercise.id,
             'exercise_text': exercise.exercise_text,
+            'solutions': solutions,
+            'selected': selected,
             'form': form, 
             'output': output,
         }

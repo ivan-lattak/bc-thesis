@@ -1,5 +1,4 @@
 import os
-import sys
 from subprocess import (
     DEVNULL, STDOUT, CalledProcessError, check_output
 )
@@ -14,12 +13,12 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import IntegrityError
 
-from .util import file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER, ExercisePaths
+from .util import (
+        file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER,
+        ExercisePaths, ErrorCode
+)
 from .forms import RefactoringForm, RegisterForm
 from .models import Exercise, Solution
-
-sys.dont_write_bytecode = True # prevent creation of __pycache__ in exercise_common
-from .exercise_common import run
 
 
 def _refactoring_form_submitted(request):
@@ -45,29 +44,6 @@ def _prepare_exercise_dir(form, ep):
     file_write(ep.tests_file(), form.cleaned_data['tests'])
 
 
-def _parse_error_code(error_code, output):
-    if error_code == run.OK:
-        return "SUCCESS\n\n" + \
-               "----- BEGIN OUTPUT -----\n" + \
-               output + \
-               "----- END OUTPUT -----"
-    elif error_code == run.COMPILATION_FAILED:
-        return "ERROR: The program failed to compile\n\n" + \
-               "----- BEGIN OUTPUT -----\n" + \
-               output + \
-               "----- END OUTPUT -----"
-    elif error_code == run.EXCEPTION:
-        return "ERROR: Errors occurred during program execution\n\n" + \
-               "----- BEGIN OUTPUT -----\n" + \
-               output + \
-               "----- END OUTPUT -----"
-    elif error_code == run.TIME_LIMIT_EXCEEDED:
-        return "ERROR: Time limit exceeded during execution\n\n" + \
-               "----- BEGIN OUTPUT -----\n" + \
-               output + \
-               "----- TIME LIMIT EXCEEDED -----"
-
-
 def _save_solution(code, creator, exercise):
     try:
         solution = Solution.objects.create(
@@ -88,13 +64,12 @@ def _execute_exercise(form, ep):
 
     try:
         output = check_output(ep.run_script(), stderr=err_output).decode('utf-8')
-        error_code = run.OK
+        error_code = ErrorCode.ok()
     except CalledProcessError as e:
         output = e.output.decode('utf-8')
-        error_code = e.returncode
+        error_code = ErrorCode.of(e.returncode)
 
-    ok = error_code == run.OK
-    return ok, _parse_error_code(error_code, output)
+    return error_code.is_ok(), error_code.format(output)
 
 
 def _original_code(exercise):

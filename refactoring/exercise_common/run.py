@@ -22,7 +22,7 @@ TIME_LIMIT_EXCEEDED = 3
 
 
 def _cleanup(return_code):
-    call(CLEANUP_CMD, stdout=DEVNULL, stderr=DEVNULL)
+    # call(CLEANUP_CMD, stdout=DEVNULL, stderr=DEVNULL) # recompile gtest lib every time
     os.chdir(_RETURN_DIR)
     return return_code
 

@@ -7,8 +7,7 @@ from operator import attrgetter
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from django.contrib.auth import login
-from django.contrib.auth.models import User
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import IntegrityError
@@ -18,7 +17,9 @@ from .util import (
         ExercisePaths, ErrorCode
 )
 from .forms import RefactoringForm, RegisterForm
-from .models import Exercise, Solution
+from .models import Exercise, Session, Solution
+
+User = get_user_model()
 
 
 def _refactoring_form_submitted(request):
@@ -90,16 +91,26 @@ def _all_tests(exercise):
     return _original_tests(exercise) + '\n\n' + _user_tests(exercise)
 
 
-def _user_solutions(exercise, user):
-    return exercise.solution_set.filter(creator=user).order_by('-sub_date')
+def _solutions_by_sub_date(session):
+    return session.solution_set.order_by('-sub_date')
 
 
 def _latest_solution(solutions):
     return solutions.first()
 
 
-def _solution_selected(request):
+def _user_selected_a_solution(request):
     return request.method == 'GET' and 'solution' in request.GET
+
+
+def _get_session_or_create(user, exercise):
+    sessions = user.session_set.filter(exercise=exercise).order_by('id')
+    if sessions:
+        return sessions.first()
+
+    session = Session.objects.create(user=user, exercise=exercise)
+    session.save()
+    return session
 
 
 @login_required
@@ -110,13 +121,14 @@ def index(request):
 @login_required
 def detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
-    solutions = _user_solutions(exercise, request.user)
-    if _solution_selected(request):
-        selected = get_object_or_404(Solution, id=request.GET['solution'])
+    session = _get_session_or_create(request.user, exercise)
+    solutions = _solutions_by_sub_date(session)
+    if _user_selected_a_solution(request):
+        selected_solution = get_object_or_404(Solution, id=request.GET['solution'])
     else:
-        selected = _latest_solution(solutions)
+        selected_solution = _latest_solution(solutions)
 
-    initial_code = selected.code if selected else _original_code(exercise)
+    initial_code = selected_solution.code if selected_solution else _original_code(exercise)
     initial_tests = _all_tests(exercise)
 
     form = RefactoringForm(initial={
@@ -144,12 +156,21 @@ def detail(request, exercise_id):
         {
             'exercise_id': exercise.id,
             'exercise_text': exercise.exercise_text,
+            'session': session,
             'solutions': solutions,
             'selected': selected,
             'form': form, 
             'output': output,
         }
     )
+
+
+@login_required
+def sessions(request, exercise_id):
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+    sessions = _get_sessions_or_create_new(request.user, exercise)
+
+    current_session_id = request.session.get('session_id', None)
 
 
 def register(request):

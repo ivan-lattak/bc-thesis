@@ -119,9 +119,14 @@ def _get_solution_or_None(solution_id):
     return Solution.objects.get(id=solution_id)
 
 
+def _get_exercises_in_order():
+    return Exercise.objects.order_by('id')
+
+
 @login_required
 def index(request):
-    return HttpResponse("Welcome to the index.")
+    exercises = _get_exercises_in_order()
+    return render(request, 'refactoring/index.html', {'exercises': exercises})
 
 
 @login_required

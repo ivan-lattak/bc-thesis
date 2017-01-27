@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Refaktorizačné cvičenia{% endblock %}
+
+{% block stylesheet %}{% static 'refactoring/style/index.css' %}{% endblock %}
+
+{% block content %}
+{% if exercises %}
+  <p>K dispozícii sú nasledovné refaktorizačné cvičenia:</p>
+  <ul>
+  {% for exercise in exercises %}
+    <li><a href="{% url 'detail' exercise.id %}">Cvičenie č. {{ exercise.id }}</a></li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>Je nám ľúto, ale k dispozícii zatiaľ nie sú žiadne refaktorizačné cvičenia.</p>
+{% endif %}
+{% endblock %}

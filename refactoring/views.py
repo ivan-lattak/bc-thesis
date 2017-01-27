@@ -45,13 +45,12 @@ def _prepare_exercise_dir(form, ep):
     file_write(ep.tests_file(), form.cleaned_data['tests'])
 
 
-def _save_solution(code, creator, exercise):
+def _save_solution(code, session):
     try:
         solution = Solution.objects.create(
                 code=code,
                 sub_date=timezone.now(),
-                creator=creator,
-                exercise=exercise,
+                session=session,
         )
         solution.save()
     except IntegrityError:
@@ -104,7 +103,7 @@ def _user_selected_a_solution(request):
 
 
 def _get_session_or_create(user, exercise):
-    sessions = user.session_set.filter(exercise=exercise).order_by('id')
+    sessions = user.session_set.filter(exercise=exercise).order_by('-id')
     if sessions:
         return sessions.first()
 
@@ -146,9 +145,9 @@ def detail(request, exercise_id):
             ep = ExercisePaths(request.user.username, exercise_id)
             execution_ok, output = _execute_exercise(form, ep)
             if execution_ok:
-                _save_solution(form.cleaned_data['code'], request.user, exercise)
-                solutions = _user_solutions(exercise, request.user)
-                selected = _latest_solution(solutions)
+                _save_solution(form.cleaned_data['code'], session)
+                solutions = _solutions_by_sub_date(session)
+                selected_solution = _latest_solution(solutions)
 
     return render(
         request,
@@ -158,7 +157,7 @@ def detail(request, exercise_id):
             'exercise_text': exercise.exercise_text,
             'session': session,
             'solutions': solutions,
-            'selected': selected,
+            'selected_solution': selected_solution,
             'form': form, 
             'output': output,
         }
@@ -168,7 +167,7 @@ def detail(request, exercise_id):
 @login_required
 def sessions(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
-    sessions = _get_sessions_or_create_new(request.user, exercise)
+    sessions = _get_session_or_create(request.user, exercise)
 
     current_session_id = request.session.get('session_id', None)
 

@@ -14,6 +14,7 @@ class User(auth_models.AbstractUser):
 class Exercise(models.Model):
     exercise_text = models.TextField()
     original_code = models.TextField()
+    original_tests = models.TextField()
 
     def __str__(self):
         return "Exercise {}".format(self.id)
@@ -30,19 +31,9 @@ class Session(models.Model):
         return isinstance(other, Session) and self.id == other.id
 
 
-class TestCase(models.Model):
-    code = models.TextField()
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-
-    matcher = re.compile(r'^TEST\([^\,\)]*\,[^\)]*\)')
-
-    def __str__(self):
-        case_name = TestCase.matcher.match(self.code).group(0)
-        return "TestCase {} of exercise {}".format(case_name, self.exercise.id)
-
-
 class Solution(models.Model):
     code = models.TextField()
+    tests = models.TextField()
     sub_date = models.DateTimeField('date submitted')
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)

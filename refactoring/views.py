@@ -13,7 +13,8 @@ from django.utils import timezone
 from django.db import IntegrityError
 
 from .util import (
-        file_read, file_write, copy_anything, COMMON_DIR, TESTS_HEADER,
+        file_read, file_write, copy_anything,
+        COMMON_DIR,
         ExercisePaths, ErrorCode
 )
 from .forms import RefactoringForm, RegisterForm
@@ -45,10 +46,11 @@ def _prepare_exercise_dir(form, ep):
     file_write(ep.tests_file(), form.cleaned_data['tests'])
 
 
-def _save_solution(code, session, parent):
+def _save_solution(code, tests, session, parent):
     try:
         solution = Solution.objects.create(
                 code=code,
+                tests=tests,
                 sub_date=timezone.now(),
                 session=session,
                 parent=parent,
@@ -78,17 +80,7 @@ def _original_code(exercise):
 
 
 def _original_tests(exercise):
-    header = file_read(TESTS_HEADER)
-    test_cases = map(attrgetter('code'), exercise.testcase_set.all())
-    return header + '\n\n'.join(test_cases)
-
-
-def _user_tests(exercise):
-    return ''
-
-
-def _all_tests(exercise):
-    return _original_tests(exercise) + '\n\n' + _user_tests(exercise)
+    return exercise.original_tests
 
 
 def _solutions_by_sub_date(session):
@@ -135,7 +127,7 @@ def detail(request, exercise_id):
         selected_solution = _latest_solution(solutions)
 
     initial_code = selected_solution.code if selected_solution else _original_code(exercise)
-    initial_tests = _all_tests(exercise)
+    initial_tests = selected_solution.tests if selected_solution else _original_tests(exercise)
 
     form = RefactoringForm(initial={
         'code': initial_code,
@@ -153,7 +145,7 @@ def detail(request, exercise_id):
             execution_ok, output = _execute_exercise(form, ep)
             if execution_ok:
                 parent_solution = _get_solution_or_None(request.session.get('parent_solution', None))
-                _save_solution(form.cleaned_data['code'], session, parent_solution)
+                _save_solution(form.cleaned_data['code'], form.cleaned_data['tests'], session, parent_solution)
                 solutions = _solutions_by_sub_date(session)
                 selected_solution = _latest_solution(solutions)
 

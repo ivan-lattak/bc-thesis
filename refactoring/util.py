@@ -9,8 +9,6 @@ from .exercise_common import run
 
 COMMON_DIR = os.path.join(settings.BASE_DIR, 'refactoring', 'exercise_common')
 
-TESTS_HEADER = os.path.join(COMMON_DIR, 'tests_header')
-
 
 def file_read(path):
     with open(path) as file:

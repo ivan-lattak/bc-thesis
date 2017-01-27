@@ -12,7 +12,6 @@ class RefactoringForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 20, 'cols': 80}),
         label='',
     )
-    tests.disabled = True
 
 
 class RegisterForm(forms.ModelForm):

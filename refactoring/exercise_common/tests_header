@@ -1,6 +1,0 @@
-#include "gtest/include/gtest/gtest.h"
-#include "include/solution.h"
-
-using namespace std;
-
-

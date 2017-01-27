@@ -45,6 +45,7 @@ class Solution(models.Model):
     code = models.TextField()
     sub_date = models.DateTimeField('date submitted')
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(localtime(self.sub_date))

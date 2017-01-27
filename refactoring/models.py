@@ -3,6 +3,7 @@ import re
 from django.db import models
 from django.contrib.auth import models as auth_models
 from django.conf import settings
+from django.utils.timezone import localtime
 
 
 class User(auth_models.AbstractUser):
@@ -46,7 +47,7 @@ class Solution(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(self.sub_date)
+        return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(localtime(self.sub_date))
 
     def __eq__(self, other):
         return isinstance(other, Solution) and self.id == other.id

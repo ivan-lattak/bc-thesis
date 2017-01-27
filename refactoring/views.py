@@ -45,12 +45,13 @@ def _prepare_exercise_dir(form, ep):
     file_write(ep.tests_file(), form.cleaned_data['tests'])
 
 
-def _save_solution(code, session):
+def _save_solution(code, session, parent):
     try:
         solution = Solution.objects.create(
                 code=code,
                 sub_date=timezone.now(),
                 session=session,
+                parent=parent,
         )
         solution.save()
     except IntegrityError:
@@ -112,6 +113,12 @@ def _get_session_or_create(user, exercise):
     return session
 
 
+def _get_solution_or_None(solution_id):
+    if solution_id is None:
+        return None
+    return Solution.objects.get(id=solution_id)
+
+
 @login_required
 def index(request):
     return HttpResponse("Welcome to the index.")
@@ -145,10 +152,12 @@ def detail(request, exercise_id):
             ep = ExercisePaths(request.user.username, exercise_id)
             execution_ok, output = _execute_exercise(form, ep)
             if execution_ok:
-                _save_solution(form.cleaned_data['code'], session)
+                parent_solution = _get_solution_or_None(request.session.get('parent_solution', None))
+                _save_solution(form.cleaned_data['code'], session, parent_solution)
                 solutions = _solutions_by_sub_date(session)
                 selected_solution = _latest_solution(solutions)
 
+    request.session['parent_solution'] = selected_solution.id if selected_solution else None
     return render(
         request,
         'refactoring/detail.html',

@@ -95,13 +95,21 @@ def _user_selected_a_solution(request):
     return request.method == 'GET' and 'solution' in request.GET
 
 
-def _get_session_or_create(user, exercise):
-    sessions = user.session_set.filter(exercise=exercise).order_by('-id')
-    if sessions:
-        return sessions.first()
+def _get_session_or_create(request, exercise):
+    if 'session_id' in request.session.keys():
+        potential_session = Session.objects.get(id=request.session['session_id'])
+        if potential_session is not None:
+            return potential_session
 
-    session = Session.objects.create(user=user, exercise=exercise)
+    sessions = request.user.session_set.filter(exercise=exercise).order_by('-id')
+    if sessions:
+        session = sessions.first()
+        request.session['session_id'] = session.id
+        return session
+
+    session = Session.objects.create(user=request.user, exercise=exercise)
     session.save()
+    request.session['session_id'] = session.id
     return session
 
 
@@ -119,7 +127,7 @@ def index(request):
 @login_required
 def detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
-    session = _get_session_or_create(request.user, exercise)
+    session = _get_session_or_create(request, exercise)
     solutions = _solutions_by_sub_date(session)
     if _user_selected_a_solution(request):
         selected_solution = get_object_or_404(Solution, id=request.GET['solution'])
@@ -168,7 +176,8 @@ def detail(request, exercise_id):
 @login_required
 def sessions(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
-    sessions = _get_session_or_create(request.user, exercise)
+    selected_session = _get_session_or_create(request.user, exercise)
+    sessions = user.session_set.filter(exercise=exercise).order_by('-id')
 
     current_session_id = request.session.get('session_id', None)
 

@@ -11,14 +11,14 @@
     {{ exercise_text|linebreaks }}
 </section>
 
-<p>Vyberte si session:</p>
+<p>Práve vybraný session č.: <strong>{{ session.id }}</strong> <a href="{% url 'sessions' exercise_id %}">Zmeniť</a></p>
 
-<p>Vyberte si riešenie:</p>
+Vyberte si riešenie:
 <form method="get">
 <select name="solution">
 {% if solutions %}
   {% for solution in solutions %}
-    <option value="{{ solution.id }}"{% if solution == selected %} selected{% endif %}>{{ solution }}</option>
+    <option value="{{ solution.id }}"{% if solution == selected_solution %} selected{% endif %}>{{ solution }}</option>
   {% endfor %}
 {% else %}
   <option>(No solutions yet)</option>

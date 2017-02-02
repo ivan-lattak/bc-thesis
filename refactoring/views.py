@@ -100,9 +100,10 @@ def _get_session_or_create(request, exercise):
         request.session['session_id'] = request.GET['session_id']
 
     if 'session_id' in request.session.keys():
-        potential_session = Session.objects.get(id=request.session['session_id'])
-        if potential_session is not None:
-            return potential_session
+        try:
+            return Session.objects.get(id=request.session['session_id'])
+        except Session.DoesNotExist:
+            pass
 
     sessions = request.user.session_set.filter(exercise=exercise).order_by('-id')
     if sessions:

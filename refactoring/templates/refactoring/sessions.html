@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sessions cvičenia č. {{ exercise_id }}{% endblock %}
+
+{% block stylesheet %}{% static 'refactoring/style/sessions.css' %}{% endblock %}
+
+{% block content %}
+<p>K cvičeniu č. {{ exercise_id }} máte vytvorené nasledovné sessions:</p>
+<form action="{% url 'detail' exercise_id %}" method="get">
+{% for session in sessions %}
+  <button type="submit" name="session_id" value="{{ session.id }}">Session č. {{ session.id }}{% if session == selected_session %} (práve vybraný){% endif %}</button>
+{% endfor %}
+</form>
+{% endblock %}

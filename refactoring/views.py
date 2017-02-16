@@ -199,6 +199,24 @@ def sessions(request, exercise_id):
     )
 
 
+@login_required
+def solutions(request, exercise_id):
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+    selected_session = _get_session_or_create(request, exercise)
+    solutions = _solutions_by_sub_date(session)
+    latest_solution = _latest_solution(solutions)
+    return render(
+        request,
+        'refactoring/solutions.html',
+        {
+            'exercise_id': exercise.id,
+            'selected_session': selected_session,
+            'solutions': solutions,
+            'latest_solution': latest_solution,
+        }
+    )
+
+
 def register(request):
     form = RegisterForm()
     if request.method == 'POST':

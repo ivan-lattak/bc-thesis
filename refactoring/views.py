@@ -92,11 +92,11 @@ def _solutions_by_sub_date_asc(session):
 
 
 def _latest_solution(session):
-    return session.solution_set.order_by('-sub_date').solutions.first()
+    return session.solution_set.order_by('-sub_date').first()
 
 
 def _get_session_or_create(request, exercise):
-    if 'session_id' in request.GET.keys():
+    if request.method == 'GET' and 'session_id' in request.GET.keys():
         request.session['session_id'] = request.GET['session_id']
 
     if 'session_id' in request.session.keys():
@@ -122,12 +122,12 @@ def _get_exercises_in_order():
 
 
 def _get_solution_or_None(request, session):
-    if 'solution_id' in request.GET.keys():
+    if request.method == 'GET' and 'solution_id' in request.GET.keys():
         request.session['solution_id'] = request.GET['solution_id']
 
     if 'solution_id' in request.session.keys():
         try:
-            return session.solution_set.get(id=request.session['session_id'])
+            return session.solution_set.get(id=request.session['solution_id'])
         except Solution.DoesNotExist:
             pass
 
@@ -151,7 +151,7 @@ def detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
     session = _get_session_or_create(request, exercise)
     solutions = _solutions_by_sub_date_desc(session)
-    selected_solution = _get_solution_or_create(request, session)
+    selected_solution = _get_solution_or_None(request, session)
 
     initial_code = selected_solution.code if selected_solution else _original_code(exercise)
     initial_tests = selected_solution.tests if selected_solution else _original_tests(exercise)
@@ -174,6 +174,7 @@ def detail(request, exercise_id):
                 parent_solution = selected_solution
                 _save_solution(form.cleaned_data['code'], form.cleaned_data['tests'], session, parent_solution)
                 selected_solution = _latest_solution(session)
+                request.session['solution_id'] = selected_solution.id
 
     return render(
         request,

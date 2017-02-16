@@ -43,4 +43,4 @@ class Solution(models.Model):
         return isinstance(other, Solution) and self.id == other.id
 
     class Meta:
-        unique_together = ('code', 'session')
+        unique_together = ('code', 'tests', 'session')

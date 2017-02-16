@@ -11,9 +11,14 @@
     {{ exercise_text|linebreaks }}
 </section>
 
-<p>Práve vybraný session č.: <strong>{{ session.id }}</strong> <a href="{% url 'sessions' exercise_id %}">Zmeniť</a></p>
+<form action="{% url 'sessions' exercise_id %}">
+<p>
+Práve vybraný session č.: <strong>{{ session.id }}</strong>
+<button>Zmeniť</button>
+</p>
+</form>
 
-<form action="solutions/">
+<form action="{% url 'solutions' exercise_id %}">
 <button{% if not solutions %} disabled{% endif %}>Vybrať iné riešenie</button>
 </form>
 

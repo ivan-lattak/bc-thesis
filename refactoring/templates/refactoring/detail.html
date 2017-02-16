@@ -19,7 +19,7 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 </form>
 
 <form action="{% url 'solutions' exercise_id %}">
-<button{% if not solutions %} disabled{% endif %}>Vybrať iné riešenie</button>
+<button{% if not selected_solution %} disabled{% endif %}>Vybrať iné riešenie</button>
 </form>
 
 <form method="post">

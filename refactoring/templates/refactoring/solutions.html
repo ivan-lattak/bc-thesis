@@ -3,10 +3,14 @@
 
 {% block title %}Riešenia cvičenia č. {{ exercise_id }}{% endblock %}
 
-{% block stylesheet %}{% static 'refactoring/style/solutions.css' %}{% endblock %}
+{% block stylesheet %}{% static 'treant/Treant.css' %}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'refactoring/style/solutions.css' %}">
+{% endblock %}
 
 {% block content %}
-<div id="solution-tree"></div>
+<div id="solution-tree" class="chart"></div>
 <script src="{% static 'treant/vendor/raphael.js' %}"></script>
 <script src="{% static 'treant/Treant.js' %}"></script>
 <script>
@@ -19,9 +23,14 @@ var solution_{{ solution.id }} = {
     {% if solution.parent is not None %}
     parent: solution_{{ solution.parent.id }},
     {% endif %}
-
-    text: {{ solution }},
-}
+    text: {
+        name: "{{ solution }}",
+        {% if solution == selected_solution %}
+        desc: "Práve vybrané",
+        {% endif %}
+    },
+    link: { href: "{% url 'detail' exercise_id %}?solution_id={{ solution.id }}" },
+};
 {% endfor %}
 
 var solution_tree_config = [

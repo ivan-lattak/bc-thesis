@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Riešenia cvičenia č. {{ exercise_id }}{% endblock %}
+
+{% block stylesheet %}{% static 'refactoring/style/solutions.css' %}{% endblock %}
+
+{% block content %}
+<div id="solution-tree"></div>
+<script src="{% static 'treant/vendor/raphael.js' %}"></script>
+<script src="{% static 'treant/Treant.js' %}"></script>
+<script>
+var config = {
+    container: "#solution-tree",
+};
+
+{% for solution in solutions %}
+var solution_{{ solution.id }} = {
+    {% if solution.parent is not None %}
+    parent: solution_{{ solution.parent.id }},
+    {% endif %}
+
+    text: {{ solution }},
+}
+{% endfor %}
+
+var solution_tree_config = [
+    config,
+    {% for solution in solutions %}
+    solution_{{ solution.id }},
+    {% endfor %}
+];
+new Treant(solution_tree_config);
+</script>
+{% endblock %}

@@ -83,16 +83,16 @@ def _original_tests(exercise):
     return exercise.original_tests
 
 
-def _solutions_by_sub_date(session):
+def _solutions_by_sub_date_desc(session):
     return session.solution_set.order_by('-sub_date')
 
 
-def _latest_solution(solutions):
-    return solutions.first()
+def _solutions_by_sub_date_asc(session):
+    return session.solution_set.order_by('sub_date')
 
 
-def _user_selected_a_solution(request):
-    return request.method == 'GET' and 'solution' in request.GET
+def _latest_solution(session):
+    return session.solution_set.order_by('-sub_date').solutions.first()
 
 
 def _get_session_or_create(request, exercise):
@@ -101,7 +101,7 @@ def _get_session_or_create(request, exercise):
 
     if 'session_id' in request.session.keys():
         try:
-            return Session.objects.get(id=request.session['session_id'])
+            return request.user.session_set.get(id=request.session['session_id'])
         except Session.DoesNotExist:
             pass
 
@@ -117,14 +117,27 @@ def _get_session_or_create(request, exercise):
     return session
 
 
-def _get_solution_or_None(solution_id):
-    if solution_id is None:
-        return None
-    return Solution.objects.get(id=solution_id)
-
-
 def _get_exercises_in_order():
     return Exercise.objects.order_by('id')
+
+
+def _get_solution_or_None(request, session):
+    if 'solution_id' in request.GET.keys():
+        request.session['solution_id'] = request.GET['solution_id']
+
+    if 'solution_id' in request.session.keys():
+        try:
+            return session.solution_set.get(id=request.session['session_id'])
+        except Solution.DoesNotExist:
+            pass
+
+    solutions = session.solution_set.order_by('-sub_date')
+    if solutions:
+        solution = solutions.first()
+        request.session['solution_id'] = solution.id
+        return solution
+
+    return None
 
 
 @login_required
@@ -137,11 +150,8 @@ def index(request):
 def detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
     session = _get_session_or_create(request, exercise)
-    solutions = _solutions_by_sub_date(session)
-    if _user_selected_a_solution(request):
-        selected_solution = get_object_or_404(Solution, id=request.GET['solution'])
-    else:
-        selected_solution = _latest_solution(solutions)
+    solutions = _solutions_by_sub_date_desc(session)
+    selected_solution = _get_solution_or_create(request, session)
 
     initial_code = selected_solution.code if selected_solution else _original_code(exercise)
     initial_tests = selected_solution.tests if selected_solution else _original_tests(exercise)
@@ -161,12 +171,10 @@ def detail(request, exercise_id):
             ep = ExercisePaths(request.user.username, exercise_id)
             execution_ok, output = _execute_exercise(form, ep)
             if execution_ok:
-                parent_solution = _get_solution_or_None(request.session.get('parent_solution', None))
+                parent_solution = selected_solution
                 _save_solution(form.cleaned_data['code'], form.cleaned_data['tests'], session, parent_solution)
-                solutions = _solutions_by_sub_date(session)
-                selected_solution = _latest_solution(solutions)
+                selected_solution = _latest_solution(session)
 
-    request.session['parent_solution'] = selected_solution.id if selected_solution else None
     return render(
         request,
         'refactoring/detail.html',
@@ -174,7 +182,6 @@ def detail(request, exercise_id):
             'exercise_id': exercise.id,
             'exercise_text': exercise.exercise_text,
             'session': session,
-            'solutions': solutions,
             'selected_solution': selected_solution,
             'form': form, 
             'output': output,
@@ -203,8 +210,9 @@ def sessions(request, exercise_id):
 def solutions(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
     selected_session = _get_session_or_create(request, exercise)
-    solutions = _solutions_by_sub_date(session)
-    latest_solution = _latest_solution(solutions)
+    solutions = _solutions_by_sub_date_asc(selected_session)
+    selected_solution = _get_solution_or_None(request, selected_session)
+
     return render(
         request,
         'refactoring/solutions.html',
@@ -212,7 +220,7 @@ def solutions(request, exercise_id):
             'exercise_id': exercise.id,
             'selected_session': selected_session,
             'solutions': solutions,
-            'latest_solution': latest_solution,
+            'selected_solution': selected_solution,
         }
     )
 

@@ -37,7 +37,7 @@ class Solution(models.Model):
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return "Solution from {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(localtime(self.sub_date))
+        return "Riešenie z {0:%Y-%m-%d}, {0:%-H:%M:%S}".format(localtime(self.sub_date))
 
     def __eq__(self, other):
         return isinstance(other, Solution) and self.id == other.id

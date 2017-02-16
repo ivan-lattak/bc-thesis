@@ -29,3 +29,8 @@ body { background: #fff; }
 .node img {
     margin-right:  10px;
 }
+
+a.node {
+    color: inherit;
+    text-decoration: none;
+}

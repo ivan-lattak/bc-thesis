@@ -50,11 +50,13 @@ var codeEditor = ace.edit('code_editor');
 codeEditor.setTheme('mono_industrial');
 codeEditor.getSession().setMode('c_cpp');
 codeEditor.setValue(codeTA.val());
+codeEditor.gotoLine(0, 0);
 
 var testsEditor = ace.edit('tests_editor');
 testsEditor.setTheme('mono_industrial');
 testsEditor.getSession().setMode('c_cpp');
 testsEditor.setValue(testsTA.val());
+testsEditor.gotoLine(0, 0);
 
 $('#refactoring_form').submit(function() {
     codeTA.val(codeEditor.getValue());

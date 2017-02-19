@@ -47,14 +47,14 @@ testsTA.css('display', 'none');
 <script src="{% static 'ace/ace.js' %}" charset="utf-8"></script>
 <script>
 var codeEditor = ace.edit('code_editor');
-codeEditor.setTheme('mono_industrial');
-codeEditor.getSession().setMode('c_cpp');
+codeEditor.setTheme('ace/theme/xcode');
+codeEditor.getSession().setMode('ace/mode/c_cpp');
 codeEditor.setValue(codeTA.val());
 codeEditor.gotoLine(0, 0);
 
 var testsEditor = ace.edit('tests_editor');
-testsEditor.setTheme('mono_industrial');
-testsEditor.getSession().setMode('c_cpp');
+testsEditor.setTheme('ace/theme/xcode');
+testsEditor.getSession().setMode('ace/mode/c_cpp');
 testsEditor.setValue(testsTA.val());
 testsEditor.gotoLine(0, 0);
 

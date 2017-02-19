@@ -5,6 +5,18 @@
 
 {% block stylesheet %}{% static 'refactoring/style/detail.css' %}{% endblock %}
 
+{% block extra_head %}
+<style type="text/css" media="screen">
+    .editor {
+        width: 50%;
+        height: 200px;
+    }
+    #code_editor {
+        float: left;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section>
     <h1>Refaktorizačné cvičenie č. {{ exercise_id }}</h1>
@@ -22,16 +34,44 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 <button{% if not selected_solution %} disabled{% endif %}>Vybrať iné riešenie</button>
 </form>
 
-<form method="post">
+<form method="post" id="refactoring_form">
 {% csrf_token %}
 {{ form }}
+<div id="code_editor" class="editor"></div>
+<div id="tests_editor" class="editor"></div>
 <br>
 <input type="submit" name="compileandrun" value="Compile and Run">
 </form>
-{% if output is not None %}
 
+{% if output is not None %}
 <section id="output">
 <p>{{ output|linebreaksbr }}</p>
 </section>
 {% endif %}
+
+<script>
+var codeTA = $('#{{ form.code.auto_id }}');
+var testsTA = $('#{{ form.tests.auto_id }}');
+
+codeTA.css('display', 'none');
+testsTA.css('display', 'none');
+</script>
+<script src="{% static 'ace/ace.js' %}" charset="utf-8"></script>
+<script>
+var codeEditor = ace.edit('code_editor');
+codeEditor.setTheme('mono_industrial');
+codeEditor.getSession().setMode('c_cpp');
+codeEditor.setValue(codeTA.val());
+
+var testsEditor = ace.edit('tests_editor');
+testsEditor.setTheme('mono_industrial');
+testsEditor.getSession().setMode('c_cpp');
+testsEditor.setValue(testsTA.val());
+
+$('#refactoring_form').submit(function() {
+    codeTA.val(codeEditor.getValue());
+    testsTA.val(testsEditor.getValue());
+    return true;
+});
+</script>
 {% endblock %}

@@ -2,10 +2,15 @@ body {
     font-family: "Arial";
 }
 
-textarea {
+#output {
     font-family: "Consolas";
 }
 
-#output  {
-    font-family: "Consolas";
+.editor {
+    width: 50%;
+    height: 200px;
+}
+
+#code_editor {
+    float: left;
 }

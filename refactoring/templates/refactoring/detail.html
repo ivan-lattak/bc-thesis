@@ -5,18 +5,6 @@
 
 {% block stylesheet %}{% static 'refactoring/style/detail.css' %}{% endblock %}
 
-{% block extra_head %}
-<style type="text/css" media="screen">
-    .editor {
-        width: 50%;
-        height: 200px;
-    }
-    #code_editor {
-        float: left;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <section>
     <h1>Refaktorizačné cvičenie č. {{ exercise_id }}</h1>

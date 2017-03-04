@@ -37,6 +37,7 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 </section>
 {% endif %}
 
+<!-- Configure ACE editors -->
 <script>
 var codeTA = $('#{{ form.code.auto_id }}');
 var testsTA = $('#{{ form.tests.auto_id }}');
@@ -63,5 +64,38 @@ $('#refactoring_form').submit(function() {
     testsTA.val(testsEditor.getValue());
     return true;
 });
+</script>
+
+<!-- Colorize and format output -->
+<script>
+jQuery.fn.colorize = function(regex, color) {
+    this.html(
+        this.html()
+            .replace(regex, "<span style=\"color: " + color + ";\">$&</span>")
+    );
+};
+
+var RED = '#f00';
+var GREEN = '#0f0';
+var GREY = '#aaa';
+
+if ($('#output').length) {
+    var output = $('#output');
+    output.colorize(/SUCCESS/, GREEN);
+    output.colorize(/\[=+\]/g, GREEN);
+    output.colorize(/\[-+\]/g, GREEN);
+    output.colorize(/\[\s*RUN\s*\]/g, GREEN);
+    output.colorize(/\[\s*OK\s*\]/g, GREEN);
+    output.colorize(/\[\s*PASSED\s*\]/g, GREEN);
+
+    output.colorize(/ERROR/, RED);
+    output.colorize(/\[\s*FAILED\s*\]/g, RED);
+
+    output.colorize(/----- BEGIN OUTPUT -----/, GREY);
+    output.colorize(/----- END OUTPUT -----/, GREY);
+    output.colorize(/----- TIME LIMIT EXCEEDED -----/, GREY);
+}
+
+
 </script>
 {% endblock %}

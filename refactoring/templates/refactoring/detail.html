@@ -79,27 +79,29 @@ var RED = '#f00';
 var GREEN = '#0f0';
 var GREY = '#aaa';
 
-if ($('#output').length) {
-    var output = $('#output');
-    output.colorize(/SUCCESS/, GREEN);
-    output.colorize(/\[=+\]/g, GREEN);
-    output.colorize(/\[-+\]/g, GREEN);
-    output.colorize(/\[\s*RUN\s*\]/g, GREEN);
-    output.colorize(/\[\s*OK\s*\]/g, GREEN);
-    output.colorize(/\[\s*PASSED\s*\]/g, GREEN);
+$(function() {
+    if ($('#output').length) {
+        var output = $('#output');
+        output.colorize(/SUCCESS/, GREEN);
+        output.colorize(/\[=+\]/g, GREEN);
+        output.colorize(/\[-+\]/g, GREEN);
+        output.colorize(/\[\s*RUN\s*\]/g, GREEN);
+        output.colorize(/\[\s*OK\s*\]/g, GREEN);
+        output.colorize(/\[\s*PASSED\s*\]/g, GREEN);
 
-    output.colorize(/ERROR/, RED);
-    output.colorize(/\[\s*FAILED\s*\]/g, RED);
+        output.colorize(/ERROR/, RED);
+        output.colorize(/\[\s*FAILED\s*\]/g, RED);
 
-    output.colorize(/----- BEGIN OUTPUT -----/, GREY);
-    output.colorize(/----- END OUTPUT -----/, GREY);
-    output.colorize(/----- TIME LIMIT EXCEEDED -----/, GREY);
+        output.colorize(/----- BEGIN OUTPUT -----/, GREY);
+        output.colorize(/----- END OUTPUT -----/, GREY);
+        output.colorize(/----- TIME LIMIT EXCEEDED -----/, GREY);
 
-    output.html(
-        output.html().replace(/\[[^\]]*\]/g, function(match) {
-            return match.replace(/\s/g, '&nbsp;');
-        })
-    );
-}
+        output.html(
+            output.html().replace(/\[[^\]]*\]/g, function(match) {
+                return match.replace(/\s/g, '&nbsp;');
+            })
+        );
+    }
+});
 </script>
 {% endblock %}

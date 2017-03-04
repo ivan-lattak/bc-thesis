@@ -94,8 +94,12 @@ if ($('#output').length) {
     output.colorize(/----- BEGIN OUTPUT -----/, GREY);
     output.colorize(/----- END OUTPUT -----/, GREY);
     output.colorize(/----- TIME LIMIT EXCEEDED -----/, GREY);
+
+    output.html(
+        output.html().replace(/\[[^\]]*\]/g, function(match) {
+            return match.replace(/\s/g, '&nbsp;');
+        })
+    );
 }
-
-
 </script>
 {% endblock %}

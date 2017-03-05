@@ -16,6 +16,14 @@
 <script>
 var config = {
     container: "#solution-tree",
+    callback: {
+        onTreeLoaded: function() {
+            var tree = this;
+            $(window).resize(function() {
+                tree.redraw();
+            });
+        }
+    },
 };
 
 {% for solution in solutions %}

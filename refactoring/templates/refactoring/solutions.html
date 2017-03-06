@@ -12,7 +12,6 @@
 {% block content %}
 <div id="solution-tree" class="chart"></div>
 <iframe id="solution-diff" frameBorder="0">
-
 </iframe>
 <script src="{% static 'treant/vendor/raphael.js' %}"></script>
 <script src="{% static 'treant/Treant.js' %}"></script>
@@ -25,7 +24,59 @@ var config = {
             $(window).resize(function() {
                 tree.redraw();
             });
-        }
+
+            var $nodes = $('.node');
+            var RED = '#faa';
+            var GREEN = '#afa';
+
+            var selected = [];
+            function getSolutionId($node) {
+                return $node.attr('href').match(/\d+$/)[0];
+            }
+            function setIframeSrc(src) {
+                if (src === undefined) {
+                    $('#solution-diff').removeAttr('src');
+                }
+                else {
+                    $('#solution-diff').attr('src', src);
+                }
+            }
+            function diffOf(solutionIds) {
+                return '{% url 'diff' exercise_id %}?from=' + solutionIds[0] + '&to=' + solutionIds[1];
+            }
+            function select($node) {
+                var myId = getSolutionId($node);
+                if (selected.length == 2) {
+                    deselect($nodes.filter('[href$=\'=' + selected[0] + '\']'));
+                }
+
+                selected.push(myId);
+                $node.css('background-color', selected.length == 1 ? RED : GREEN);
+                if (selected.length == 2) {
+                    setIframeSrc(diffOf(selected));
+                }
+            }
+            function deselect($node) {
+                var myId = getSolutionId($node);
+                if (selected.indexOf(myId) == 0 && selected.length == 2) {
+                    $nodes.filter('[href$=\'=' + selected[1] + '\']').css('background-color', RED);
+                }
+
+                setIframeSrc();
+                $node.css('background-color', '');
+                selected.splice(selected.indexOf(myId), 1);
+            }
+
+            $nodes.contextmenu(function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                var myId = getSolutionId($this);
+                if (selected.indexOf(myId) == -1) {
+                    return select($this);
+                }
+                return deselect($this);
+            });
+        },
     },
 };
 

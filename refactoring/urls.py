@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^(?P<exercise_id>[0-9]+)/$',           views.detail, name='detail'        ),
     url(r'^(?P<exercise_id>[0-9]+)/sessions/$',  views.sessions, name='sessions'    ),
     url(r'^(?P<exercise_id>[0-9]+)/solutions/$', views.solutions, name='solutions'  ),
+    url(r'^(?P<exercise_id>[0-9]+)/diff/$',      views.diff, name='diff'            ),
     url(r'^$',                                   views.index, name='index'          ),
 ]

@@ -2,7 +2,7 @@ import os
 from subprocess import (
     DEVNULL, STDOUT, CalledProcessError, check_output
 )
-from operator import attrgetter
+from difflib import HtmlDiff
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -224,6 +224,14 @@ def solutions(request, exercise_id):
             'selected_solution': selected_solution,
         }
     )
+
+
+@login_required
+def diff(request, exercise_id):
+    fromlines = Solution.objects.filter(session__user=request.user).get(id=request.GET['from']).code.splitlines(keepends=True)
+    tolines = Solution.objects.filter(session__user=request.user).get(id=request.GET['to']).code.splitlines(keepends=True)
+
+    return HttpResponse(HtmlDiff().make_file(fromlines, tolines))
 
 
 def register(request):

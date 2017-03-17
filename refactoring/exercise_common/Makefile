@@ -70,7 +70,7 @@ gtest_main.a : gtest-all.o gtest_main.o
 USER_HEADERS = $(USER_DIR)/include/*.h
 USER_OBJ = $(USER_DIR)/tests.o
 
-USER_FLAGS = -std=gnu++0x
+USER_FLAGS = -std=gnu++11
 
 %.o : $(USER_DIR)/%.cc $(USER_HEADERS) $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(USER_FLAGS) -c $<

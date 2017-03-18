@@ -241,9 +241,17 @@ def solutions(request, exercise_id):
 
 
 @login_required
-def diff(request, exercise_id):
+def src_diff(request, exercise_id):
     fromlines = Solution.objects.filter(session__user=request.user).get(id=request.GET['from']).code.splitlines(keepends=True)
     tolines = Solution.objects.filter(session__user=request.user).get(id=request.GET['to']).code.splitlines(keepends=True)
+
+    return HttpResponse(HtmlDiff().make_file(fromlines, tolines))
+
+
+@login_required
+def test_diff(request, exercise_id):
+    fromlines = Solution.objects.filter(session__user=request.user).get(id=request.GET['from']).tests.splitlines(keepends=True)
+    tolines = Solution.objects.filter(session__user=request.user).get(id=request.GET['to']).tests.splitlines(keepends=True)
 
     return HttpResponse(HtmlDiff().make_file(fromlines, tolines))
 

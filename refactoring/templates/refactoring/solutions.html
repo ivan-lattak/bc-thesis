@@ -11,8 +11,11 @@
 
 {% block content %}
 <div id="solution-tree" class="chart"></div>
-<iframe id="solution-diff" frameBorder="0">
-</iframe>
+<div align="center">
+<p>Pomocou pravého tlačidla myši vyberte dve riešenia na zdiffovanie.</p>
+<button id="src-diff-button" class="diff-button" disabled>Zobraziť diff kódu</button>
+<button id="test-diff-button" class="diff-button" disabled>Zobraziť diff testov</button>
+</div>
 <script src="{% static 'treant/vendor/raphael.js' %}"></script>
 <script src="{% static 'treant/Treant.js' %}"></script>
 <script>
@@ -30,19 +33,28 @@ var config = {
             var GREEN = '#afa';
 
             var selected = [];
+            var diffButtons = $('.diff-button');
+            $('#src-diff-button').click(function() {
+                window.open(srcDiffOf(selected));
+            });
+            $('#test-diff-button').click(function() {
+                window.open(testDiffOf(selected));
+            });
+
             function getSolutionId($node) {
                 return $node.attr('href').match(/\d+$/)[0];
             }
-            function setIframeSrc(src) {
-                if (src === undefined) {
-                    $('#solution-diff').removeAttr('src');
-                }
-                else {
-                    $('#solution-diff').attr('src', src);
-                }
+            function enableDiffButtons() {
+                diffButtons.removeAttr('disabled');
             }
-            function diffOf(solutionIds) {
-                return '{% url 'diff' exercise_id %}?from=' + solutionIds[0] + '&to=' + solutionIds[1];
+            function disableDiffButtons() {
+                diffButtons.attr('disabled', true);
+            }
+            function srcDiffOf(solutionIds) {
+                return '{% url 'src_diff' exercise_id %}?from=' + solutionIds[0] + '&to=' + solutionIds[1];
+            }
+            function testDiffOf(solutionIds) {
+                return '{% url 'test_diff' exercise_id %}?from=' + solutionIds[0] + '&to=' + solutionIds[1];
             }
             function select($node) {
                 var myId = getSolutionId($node);
@@ -53,7 +65,7 @@ var config = {
                 selected.push(myId);
                 $node.css('background-color', selected.length == 1 ? RED : GREEN);
                 if (selected.length == 2) {
-                    setIframeSrc(diffOf(selected));
+                    enableDiffButtons();
                 }
             }
             function deselect($node) {
@@ -62,7 +74,7 @@ var config = {
                     $nodes.filter('[href$=\'=' + selected[1] + '\']').css('background-color', RED);
                 }
 
-                setIframeSrc();
+                disableDiffButtons();
                 $node.css('background-color', '');
                 selected.splice(selected.indexOf(myId), 1);
             }

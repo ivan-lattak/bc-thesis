@@ -11,6 +11,7 @@ from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import IntegrityError
+from django.urls import reverse
 
 from .util import (
         file_read, file_write, copy_anything,
@@ -95,9 +96,23 @@ def _latest_solution(session):
     return session.solution_set.order_by('-sub_date').first()
 
 
+def _create_session(request, exercise):
+    session = Session.objects.create(user=request.user, exercise=exercise)
+    session.save()
+    return session
+
+
+def _set_session_id(request, session_id):
+    request.session['session_id'] = session_id
+
+
+def _set_solution_id(request, solution_id):
+    request.session['solution_id'] = solution_id
+
+
 def _get_session_or_create(request, exercise):
     if request.method == 'GET' and 'session_id' in request.GET.keys():
-        request.session['session_id'] = request.GET['session_id']
+        _set_session_id(request, request.GET['session_id'])
 
     if 'session_id' in request.session.keys():
         try:
@@ -108,12 +123,11 @@ def _get_session_or_create(request, exercise):
     sessions = request.user.session_set.filter(exercise=exercise).order_by('-id')
     if sessions:
         session = sessions.first()
-        request.session['session_id'] = session.id
+        _set_session_id(request, session.id)
         return session
 
-    session = Session.objects.create(user=request.user, exercise=exercise)
-    session.save()
-    request.session['session_id'] = session.id
+    session = _create_session(request, exercise)
+    _set_session_id(request, session.id)
     return session
 
 
@@ -123,7 +137,7 @@ def _get_exercises_in_order():
 
 def _get_solution_or_None(request, session):
     if request.method == 'GET' and 'solution_id' in request.GET.keys():
-        request.session['solution_id'] = request.GET['solution_id']
+        _set_solution_id(request, request.GET['solution_id'])
 
     if 'solution_id' in request.session.keys():
         try:
@@ -134,7 +148,7 @@ def _get_solution_or_None(request, session):
     solutions = session.solution_set.order_by('-sub_date')
     if solutions:
         solution = solutions.first()
-        request.session['solution_id'] = solution.id
+        _set_solution_id(request, solution.id)
         return solution
 
     return None
@@ -194,7 +208,7 @@ def detail(request, exercise_id):
 def sessions(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
     selected_session = _get_session_or_create(request, exercise)
-    sessions = request.user.session_set.filter(exercise=exercise).order_by('-id')
+    sessions = request.user.session_set.filter(exercise=exercise).order_by('id')
 
     return render(
         request,
@@ -232,6 +246,20 @@ def diff(request, exercise_id):
     tolines = Solution.objects.filter(session__user=request.user).get(id=request.GET['to']).code.splitlines(keepends=True)
 
     return HttpResponse(HtmlDiff().make_file(fromlines, tolines))
+
+
+@login_required
+def new_session(request, exercise_id):
+    _set_session_id(request, _create_session(request, get_object_or_404(Exercise, id=exercise_id)).id)
+    return HttpResponseRedirect(reverse('detail', args=[exercise_id]))
+
+
+@login_required
+def delete_session(request, exercise_id, session_id):
+    if Session.objects.filter(user=request.user, exercise_id=exercise_id).count() > 1:
+        get_object_or_404(Session, id=session_id, user=request.user, exercise_id=exercise_id).delete()
+
+    return HttpResponseRedirect(reverse('sessions', args=[exercise_id]))
 
 
 def register(request):

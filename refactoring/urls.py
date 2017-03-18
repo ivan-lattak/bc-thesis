@@ -4,12 +4,14 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^admin/',                              admin.site.urls                    ),
-    url(r'^auth/',                               include('django.contrib.auth.urls')),
-    url(r'^auth/register/',                      views.register, name='register'    ),
-    url(r'^(?P<exercise_id>[0-9]+)/$',           views.detail, name='detail'        ),
-    url(r'^(?P<exercise_id>[0-9]+)/sessions/$',  views.sessions, name='sessions'    ),
-    url(r'^(?P<exercise_id>[0-9]+)/solutions/$', views.solutions, name='solutions'  ),
-    url(r'^(?P<exercise_id>[0-9]+)/diff/$',      views.diff, name='diff'            ),
-    url(r'^$',                                   views.index, name='index'          ),
+    url(r'^admin/',                                                         admin.site.urls                            ),
+    url(r'^auth/',                                                          include('django.contrib.auth.urls')        ),
+    url(r'^auth/register/',                                                 views.register, name='register'            ),
+    url(r'^(?P<exercise_id>[0-9]+)/$',                                      views.detail, name='detail'                ),
+    url(r'^(?P<exercise_id>[0-9]+)/sessions/$',                             views.sessions, name='sessions'            ),
+    url(r'^(?P<exercise_id>[0-9]+)/solutions/$',                            views.solutions, name='solutions'          ),
+    url(r'^(?P<exercise_id>[0-9]+)/diff/$',                                 views.diff, name='diff'                    ),
+    url(r'^(?P<exercise_id>[0-9]+)/new_session/$',                          views.new_session, name='new_session'      ),
+    url(r'^(?P<exercise_id>[0-9]+)/delete_session/(?P<session_id>[0-9]+)$', views.delete_session, name='delete_session'),
+    url(r'^$',                                                              views.index, name='index'                  ),
 ]

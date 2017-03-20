@@ -299,3 +299,7 @@ def register(request):
             return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
     return render(request, 'registration/register.html', {'form': form})
+
+
+def logged_out(request):
+    return render(request, 'registration/logged_out.html')

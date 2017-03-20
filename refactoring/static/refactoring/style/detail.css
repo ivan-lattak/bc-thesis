@@ -14,3 +14,13 @@ body {
 #code_editor {
     float: left;
 }
+
+h1 {
+    text-align: center;
+}
+
+.exercise-selector {
+    height: 45px;
+    vertical-align: middle;
+    margin: 0 10px;
+}

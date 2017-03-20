@@ -6,8 +6,10 @@
 {% block stylesheet %}{% static 'refactoring/style/detail.css' %}{% endblock %}
 
 {% block content %}
+<h1>
+<button class="exercise-selector" formaction="{% url 'detail' prev_exercise %}"{% if not prev_exists %} disabled{% endif %}>&larr;</button>Refaktorizačné cvičenie č. {{ exercise_id }}<button class="exercise-selector" formaction="{% url 'detail' next_exercise %}"{% if not next_exists %} disabled{% endif %}>&rarr;</button>
+</h1>
 <section>
-    <h1>Refaktorizačné cvičenie č. {{ exercise_id }}</h1>
     {{ exercise_text|linebreaks }}
 </section>
 

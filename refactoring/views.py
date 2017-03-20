@@ -154,6 +154,14 @@ def _get_solution_or_None(request, session):
     return None
 
 
+def _exercise_exists(exercise_id):
+    try:
+        Exercise.objects.get(id=exercise_id)
+        return True
+    except Exercise.DoesNotExist:
+        return False
+
+
 @login_required
 def index(request):
     exercises = _get_exercises_in_order()
@@ -190,11 +198,20 @@ def detail(request, exercise_id):
                 selected_solution = _latest_solution(session)
                 request.session['solution_id'] = selected_solution.id
 
+    prev_exercise = int(exercise.id) - 1
+    next_exercise = int(exercise.id) + 1
+
     return render(
         request,
         'refactoring/detail.html',
         {
             'exercise_id': exercise.id,
+
+            'prev_exercise': prev_exercise,
+            'prev_exists': _exercise_exists(prev_exercise),
+            'next_exercise': next_exercise,
+            'next_exists': _exercise_exists(next_exercise),
+
             'exercise_text': exercise.exercise_text,
             'session': session,
             'selected_solution': selected_solution,

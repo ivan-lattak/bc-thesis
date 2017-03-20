@@ -205,6 +205,7 @@ def detail(request, exercise_id):
         request,
         'refactoring/detail.html',
         {
+            'request': request,
             'exercise_id': exercise.id,
 
             'prev_exercise': prev_exercise,

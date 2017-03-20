@@ -1,0 +1,6 @@
+{% load static %}
+<header>
+<div id="back-to-index">Späť na <a href="{% url 'index' %}">index</a>.</div>
+<div id="username-info">Prihlásený/-á ako {{ request.user.username }}.</div>
+<div><a href="{% url 'logout' %}">Odhlásiť</a></div>
+</header>

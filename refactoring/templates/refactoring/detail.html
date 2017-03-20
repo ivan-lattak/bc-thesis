@@ -18,17 +18,15 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 </p>
 </form>
 
-<form action="{% url 'solutions' exercise_id %}">
-<button{% if not selected_solution %} disabled{% endif %}>Vybrať iné riešenie</button>
-</form>
-
 <form method="post" id="refactoring_form">
 {% csrf_token %}
 {{ form }}
 <div id="code_editor" class="editor"></div>
 <div id="tests_editor" class="editor"></div>
 <br>
-<input type="submit" name="compileandrun" value="Compile and Run">
+<button type="submit" name="compileandrun">Skompilovať a spustiť</button>
+
+<button formaction="{% url 'solutions' exercise_id %}"{% if not selected_solution %} disabled{% endif %}>Vybrať iné riešenie</button>
 </form>
 
 {% if output is not None %}

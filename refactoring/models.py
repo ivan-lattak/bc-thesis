@@ -33,6 +33,7 @@ class Solution(models.Model):
     code = models.TextField()
     tests = models.TextField()
     sub_date = models.DateTimeField('date submitted')
+    serial_id = models.IntegerField()
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
 

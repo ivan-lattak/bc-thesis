@@ -100,7 +100,7 @@ var solution_{{ solution.id }} = {
     parent: solution_{{ solution.parent.id }},
     {% endif %}
     text: {
-        name: "{{ solution }}{% if solution == selected_solution %} (práve vybrané){% endif %}"
+        name: "{{ solution.serial_id }}{% if solution == selected_solution %} (práve vybrané){% endif %}"
     },
     link: { href: "{% url 'detail' exercise_id %}?solution_id={{ solution.id }}" },
 };

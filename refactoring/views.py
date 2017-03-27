@@ -48,11 +48,15 @@ def _prepare_exercise_dir(form, ep):
 
 
 def _save_solution(code, tests, session, parent):
+    def next_serial_id(session):
+        return session.solution_set.count() + 1
+
     try:
         solution = Solution.objects.create(
                 code=code,
                 tests=tests,
                 sub_date=timezone.now(),
+                serial_id=next_serial_id(session),
                 session=session,
                 parent=parent,
         )

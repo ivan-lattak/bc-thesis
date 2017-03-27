@@ -15,12 +15,14 @@
     {{ exercise_text|linebreaks }}
 </section>
 
+<!--
 <form action="{% url 'sessions' exercise_id %}">
 <p>
 Práve vybraný session č.: <strong>{{ session.id }}</strong>
 <button>Zmeniť</button>
 </p>
 </form>
+-->
 
 <form method="post" id="refactoring_form">
 {% csrf_token %}

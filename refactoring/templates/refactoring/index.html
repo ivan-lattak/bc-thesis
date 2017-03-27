@@ -6,6 +6,8 @@
 {% block stylesheet %}{% static 'refactoring/style/index.css' %}{% endblock %}
 
 {% block content %}
+{% include './common/header.html' %}
+
 {% if exercises %}
   <p>K dispozícii sú nasledovné refaktorizačné cvičenia:</p>
   <ul>

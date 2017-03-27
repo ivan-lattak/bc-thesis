@@ -6,6 +6,8 @@
 {% block stylesheet %}{% static 'refactoring/style/sessions.css' %}{% endblock %}
 
 {% block content %}
+{% include './common/header.html' %}
+
 <p>K cvičeniu č. {{ exercise_id }} máte vytvorené nasledovné sessions:</p>
 <form action="{% url 'detail' exercise_id %}" method="get">
 {% for session in sessions %}

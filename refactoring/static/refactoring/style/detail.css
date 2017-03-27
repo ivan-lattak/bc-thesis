@@ -1,5 +1,29 @@
 body {
     font-family: "Arial";
+    margin: 0;
+}
+
+#header {
+    height: 50px;
+    background-color: #666;
+    text-align: right;
+}
+
+#header div {
+    display: inline-block;
+    line-height: 50px;
+    color: #ddd;
+    padding: 0 10px;
+    text-transform: uppercase;
+}
+
+#back-to-index {
+    float: left;
+}
+
+#header a div:hover {
+    background-color: #ddd;
+    color: #666;
 }
 
 #output {

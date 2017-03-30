@@ -8,6 +8,7 @@
 {% block content %}
 {% include './common/header.html' %}
 
+<section id="exercise-list">
 {% if exercises %}
   <p>K dispozícii sú nasledovné refaktorizačné cvičenia:</p>
   <ul>
@@ -18,4 +19,5 @@
 {% else %}
   <p>Je nám ľúto, ale k dispozícii zatiaľ nie sú žiadne refaktorizačné cvičenia.</p>
 {% endif %}
+</section>
 {% endblock %}

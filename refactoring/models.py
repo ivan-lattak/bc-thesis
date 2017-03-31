@@ -10,12 +10,20 @@ class User(auth_models.AbstractUser):
 
 
 class Exercise(models.Model):
-    exercise_text = models.TextField()
     original_code = models.TextField()
     original_tests = models.TextField()
 
     def __str__(self):
         return "Exercise {}".format(self.id)
+
+
+class Step(models.Model):
+    text = models.TextField()
+    serial_id = models.IntegerField()
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.text
 
 
 class Session(models.Model):

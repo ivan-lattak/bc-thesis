@@ -25,6 +25,9 @@ class Step(models.Model):
     def __str__(self):
         return self.text
 
+    class Meta:
+        unique_together = ('serial_id', 'exercise')
+
 
 class Session(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -52,4 +55,5 @@ class Solution(models.Model):
         return isinstance(other, Solution) and self.id == other.id
 
     class Meta:
-        unique_together = ('code', 'tests', 'session')
+        unique_together = (('code', 'tests', 'session'),
+                           ('serial_id', 'session'))

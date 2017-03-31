@@ -176,7 +176,7 @@ def index(request):
 def detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id)
     session = _get_session_or_create(request, exercise)
-    solutions = _solutions_by_sub_date_desc(session)
+    solutions = _solutions_by_sub_date_asc(session)
     selected_solution = _get_solution_or_None(request, session)
 
     initial_code = selected_solution.code if selected_solution else _original_code(exercise)
@@ -219,6 +219,7 @@ def detail(request, exercise_id):
 
             'exercise_text': exercise.exercise_text,
             'session': session,
+            'solutions': solutions,
             'selected_solution': selected_solution,
             'form': form, 
             'output': output,

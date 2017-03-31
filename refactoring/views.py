@@ -80,18 +80,6 @@ def _execute_exercise(form, ep):
     return error_code.is_ok(), error_code.format(output)
 
 
-def _original_code(exercise):
-    return exercise.original_code
-
-
-def _original_tests(exercise):
-    return exercise.original_tests
-
-
-def _solutions_by_sub_date_desc(session):
-    return session.solution_set.order_by('-sub_date')
-
-
 def _solutions_by_sub_date_asc(session):
     return session.solution_set.order_by('sub_date')
 
@@ -179,8 +167,8 @@ def detail(request, exercise_id):
     solutions = _solutions_by_sub_date_asc(session)
     selected_solution = _get_solution_or_None(request, session)
 
-    initial_code = selected_solution.code if selected_solution else _original_code(exercise)
-    initial_tests = selected_solution.tests if selected_solution else _original_tests(exercise)
+    initial_code = selected_solution.code if selected_solution else exercise.original_code
+    initial_tests = selected_solution.tests if selected_solution else exercise.original_tests
 
     form = RefactoringForm(initial={
         'code': initial_code,

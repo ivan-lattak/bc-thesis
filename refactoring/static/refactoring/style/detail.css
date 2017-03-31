@@ -1,6 +1,67 @@
-body {
-    font-family: "Arial";
-    margin: 0;
+body,
+.chart div,
+.chart dl,
+.chart dt,
+.chart dd,
+.chart ul,
+.chart ol,
+.chart li,
+.chart h1,
+.chart h2,
+.chart h3,
+.chart h4,
+.chart h5,
+.chart h6,
+.chart pre,
+.chart form,
+.chart fieldset,
+.chart input,
+.chart textarea,
+.chart p,
+.chart blockquote,
+.chart th,
+.chart td { margin:0; padding:0; }
+
+table { border-collapse:collapse; border-spacing:0; }
+fieldset,img { border:0; }
+address,caption,cite,code,dfn,em,strong,th,var { font-style:normal; font-weight:normal; }
+caption,th { text-align:left; }
+
+.chart h1,
+.chart h2,
+.chart h3,
+.chart h4,
+.chart h5,
+.chart h6 { font-size:100%; font-weight:normal; }
+
+q:before,q:after { content:''; }
+abbr,acronym { border:0; }
+
+body { background: #fff; font-family: "Arial"; }
+/* optional Container STYLES */
+#solution-tree-container { height: 400px; width: 20%; float: right; }
+.chart { height: 300px; width: 100%; }
+#solution-tree-tooltip { height: 100px; }
+#solution-tree-tooltip p { font-size: 0.8em; }
+.Treant > .node {  }
+.Treant > p { font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; font-weight: bold; font-size: 12px; }
+.node-name { font-weight: bold;}
+
+.node {
+    padding: 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    /* width: 250px; */
+    font-family: Tahoma;
+    font-size: 12px;
+}
+
+a.node {
+    color: inherit;
+    text-decoration: none;
 }
 
 #header {
@@ -26,16 +87,17 @@ body {
     color: #666;
 }
 
+#header strong {
+    font-weight: bold;
+}
+
 #output {
     font-family: "Consolas";
 }
 
 .editor {
-    width: 50%;
-    height: 300px;
-}
-
-#code_editor {
+    width: 40%;
+    height: 400px;
     float: left;
 }
 

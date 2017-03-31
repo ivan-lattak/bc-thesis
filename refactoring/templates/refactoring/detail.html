@@ -5,6 +5,10 @@
 
 {% block stylesheet %}{% static 'refactoring/style/detail.css' %}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'treant/Treant.css' %}">
+{% endblock %}
+
 {% block content %}
 {% include './common/header.html' %}
 
@@ -29,6 +33,16 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 {{ form }}
 <div id="code_editor" class="editor"></div>
 <div id="tests_editor" class="editor"></div>
+
+<div id="solution-tree-container">
+<div id="solution-tree" class="chart"></div>
+<div id="solution-tree-tooltip" align="center">
+<p>Pomocou pravého tlačidla myši vyberte dve riešenia na zdiffovanie.</p>
+<button id="src-diff-button" class="diff-button" disabled>Zobraziť diff kódu</button>
+<button id="test-diff-button" class="diff-button" disabled>Zobraziť diff testov</button>
+</div>
+</div>
+
 <br>
 <button type="submit" name="compileandrun">Skompilovať a spustiť</button>
 
@@ -40,6 +54,10 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 <p>{{ output|linebreaksbr }}</p>
 </section>
 {% endif %}
+
+<!-- Source raphael.js and Treant.js libs -->
+<script src="{% static 'treant/vendor/raphael.js' %}"></script>
+<script src="{% static 'treant/Treant.js' %}"></script>
 
 <!-- Configure ACE editors -->
 <script>
@@ -68,6 +86,102 @@ $('#refactoring_form').submit(function() {
     testsTA.val(testsEditor.getValue());
     return true;
 });
+</script>
+
+<!-- Configure Treant.js instance -->
+<script>
+var config = {
+    container: "#solution-tree",
+    callback: {
+        onTreeLoaded: function() {
+            var tree = this;
+            $(window).resize(function() {
+                tree.redraw();
+            });
+
+            var $nodes = $('.node');
+            var RED = '#faa';
+            var GREEN = '#afa';
+
+            var selected = [];
+            var diffButtons = $('.diff-button');
+            $('#src-diff-button').click(function() {
+                window.open(srcDiffOf(selected));
+            });
+            $('#test-diff-button').click(function() {
+                window.open(testDiffOf(selected));
+            });
+
+            function getSolutionId($node) {
+                return $node.attr('href').match(/\d+$/)[0];
+            }
+            function enableDiffButtons() {
+                diffButtons.removeAttr('disabled');
+            }
+            function disableDiffButtons() {
+                diffButtons.attr('disabled', true);
+            }
+            function srcDiffOf(solutionIds) {
+                return '{% url 'src_diff' exercise_id %}?from=' + solutionIds[0] + '&to=' + solutionIds[1];
+            }
+            function testDiffOf(solutionIds) {
+                return '{% url 'test_diff' exercise_id %}?from=' + solutionIds[0] + '&to=' + solutionIds[1];
+            }
+            function select($node) {
+                var myId = getSolutionId($node);
+                if (selected.length == 2) {
+                    deselect($nodes.filter('[href$=\'=' + selected[0] + '\']'));
+                }
+
+                selected.push(myId);
+                $node.css('background-color', selected.length == 1 ? RED : GREEN);
+                if (selected.length == 2) {
+                    enableDiffButtons();
+                }
+            }
+            function deselect($node) {
+                var myId = getSolutionId($node);
+                if (selected.indexOf(myId) == 0 && selected.length == 2) {
+                    $nodes.filter('[href$=\'=' + selected[1] + '\']').css('background-color', RED);
+                }
+
+                disableDiffButtons();
+                $node.css('background-color', '');
+                selected.splice(selected.indexOf(myId), 1);
+            }
+
+            $nodes.contextmenu(function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                var myId = getSolutionId($this);
+                if (selected.indexOf(myId) == -1) {
+                    return select($this);
+                }
+                return deselect($this);
+            });
+        },
+    },
+};
+
+{% for solution in solutions %}
+var solution_{{ solution.id }} = {
+    {% if solution.parent is not None %}
+    parent: solution_{{ solution.parent.id }},
+    {% endif %}
+    text: {
+        {% if solution == selected_solution %}name{% else %}desc{% endif %}: "{{ solution.serial_id }}"
+    },
+    link: { href: "{% url 'detail' exercise_id %}?solution_id={{ solution.id }}" },
+};
+{% endfor %}
+
+var solution_tree_config = [
+    config,
+    {% for solution in solutions %}
+    solution_{{ solution.id }},
+    {% endfor %}
+];
+new Treant(solution_tree_config);
 </script>
 
 <!-- Colorize and format output -->

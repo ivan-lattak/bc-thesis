@@ -42,7 +42,7 @@ body { background: #fff; font-family: "Arial"; }
 #solution-tree-container { height: 400px; width: 20%; float: right; }
 .chart { height: 300px; width: 100%; }
 #solution-tree-tooltip { height: 100px; }
-#solution-tree-tooltip p { font-size: 0.8em; }
+#solution-tree-tooltip p { font-size: 0.8em; margin: 0 5px; }
 .Treant > .node {  }
 .Treant > p { font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; font-weight: bold; font-size: 12px; }
 .node-name { font-weight: bold;}
@@ -109,4 +109,27 @@ h1 {
     height: 45px;
     vertical-align: middle;
     margin: 0 10px;
+}
+
+#exercise-step {
+    height: 150px;
+    border: #666 2px solid;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.step-selector {
+    display: inline-block;
+    width: 5%;
+    height: 150px;
+    vertical-align: top;
+    padding: 0;
+}
+
+#exercise-text {
+    display: inline-block;
+    width: 89%;
+    height: 150px;
+    padding: 0 .5%;
+    overflow: auto;
 }

@@ -15,8 +15,18 @@
 <h1>
 <button class="exercise-selector" formaction="{% url 'detail' prev_exercise %}"{% if not prev_exists %} disabled{% endif %}>&larr;</button>Refaktorizačné cvičenie č. {{ exercise_id }}<button class="exercise-selector" formaction="{% url 'detail' next_exercise %}"{% if not next_exists %} disabled{% endif %}>&rarr;</button>
 </h1>
-<section>
+<section id="exercise-step">
+
+<button id="step-backward" class="step-selector" type="button">
+Späť
+</button
+><div id="exercise-text">
     {{ exercise_text|linebreaks }}
+</div
+><button id="step-forward" class="step-selector" type="button">
+Ďalej
+</button>
+
 </section>
 
 <!--

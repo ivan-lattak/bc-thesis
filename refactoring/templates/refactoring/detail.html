@@ -20,8 +20,7 @@
 <button id="step-backward" class="step-selector" type="button">
 Späť
 </button
-><div id="exercise-text">
-    {{ exercise_text|linebreaks }}
+><div id="step-text">
 </div
 ><button id="step-forward" class="step-selector" type="button">
 Ďalej
@@ -69,6 +68,69 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 <!-- Source raphael.js and Treant.js libs -->
 <script src="{% static 'treant/vendor/raphael.js' %}"></script>
 <script src="{% static 'treant/Treant.js' %}"></script>
+
+<!-- Fill and configure exercise stepping -->
+<script>
+$(function() {
+    var steps = [];
+    var current_step = 0;
+
+    function step_backward() {
+        if (current_step == 0) {
+            return;
+        }
+        current_step--;
+        update_step_text();
+        update_buttons();
+    }
+    function step_forward() {
+        if (current_step == steps.length - 1) {
+            return;
+        }
+        current_step++;
+        update_step_text();
+        update_buttons();
+    }
+
+    function update_step_text() {
+        var $step_text = $('#step-text');
+        $step_text.empty();
+        $.each(steps[current_step].split('\n\n'), function(_, par) {
+            $step_text.append('<p>' + par + '</p>');
+        });
+    }
+    function update_buttons() {
+        if (current_step == 0) {
+            $('#step-backward').attr('disabled', true);
+        }
+        else {
+            $('#step-backward').removeAttr('disabled');
+        }
+        if (current_step == steps.length - 1) {
+            $('#step-forward').attr('disabled', true);
+        }
+        else {
+            $('#step-forward').removeAttr('disabled');
+        }
+    }
+
+    $('#step-backward').click(function() {
+        step_backward();
+    });
+    $('#step-forward').click(function() {
+        step_forward();
+    });
+
+    $.getJSON('{% url 'steps' exercise_id %}', function(json) {
+        $.each(json, function (_, value) {
+            steps.push(value);
+        });
+
+        update_step_text();
+        update_buttons();
+    });
+});
+</script>
 
 <!-- Configure ACE editors -->
 <script>

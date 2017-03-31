@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^(?P<exercise_id>[0-9]+)/test_diff/$',                            views.test_diff, name='test_diff'          ),
     url(r'^(?P<exercise_id>[0-9]+)/new_session/$',                          views.new_session, name='new_session'      ),
     url(r'^(?P<exercise_id>[0-9]+)/delete_session/(?P<session_id>[0-9]+)$', views.delete_session, name='delete_session'),
+    url(r'^(?P<exercise_id>[0-9]+)/steps$',                                 views.steps, name='steps'                  ),
     url(r'^$',                                                              views.index, name='index'                  ),
 ]

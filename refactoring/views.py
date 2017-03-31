@@ -5,7 +5,7 @@ from subprocess import (
 from difflib import HtmlDiff
 
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -127,6 +127,10 @@ def _get_exercises_in_order():
     return Exercise.objects.order_by('id')
 
 
+def _get_exercise_steps_in_order(exercise):
+    return list(map(lambda step: step.text, exercise.step_set.order_by('serial_id')))
+
+
 def _get_solution_or_None(request, session):
     if request.method == 'GET' and 'solution_id' in request.GET.keys():
         _set_solution_id(request, request.GET['solution_id'])
@@ -205,7 +209,6 @@ def detail(request, exercise_id):
             'next_exercise': next_exercise,
             'next_exists': _exercise_exists(next_exercise),
 
-            'exercise_text': exercise.exercise_text,
             'session': session,
             'solutions': solutions,
             'selected_solution': selected_solution,
@@ -213,6 +216,12 @@ def detail(request, exercise_id):
             'output': output,
         }
     )
+
+
+@login_required
+def steps(request, exercise_id):
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+    return JsonResponse(_get_exercise_steps_in_order(exercise), safe=False)
 
 
 @login_required

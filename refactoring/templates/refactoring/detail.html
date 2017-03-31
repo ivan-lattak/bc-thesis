@@ -45,8 +45,9 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 
 <br>
 <button type="submit" name="compileandrun">Skompilovať a spustiť</button>
-
+<!--
 <button formaction="{% url 'solutions' exercise_id %}"{% if not selected_solution %} disabled{% endif %}>Vybrať iné riešenie</button>
+-->
 </form>
 
 {% if output is not None %}

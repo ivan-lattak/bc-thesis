@@ -94,8 +94,12 @@ $(function() {
 
     function update_step_text() {
         var $step_text = $('#step-text');
+
+        var line_sep = steps[current_step].indexOf('\r\n') === -1 ? '\n' : '\r\n';
+        var par_sep = line_sep + line_sep;
+
         $step_text.empty();
-        $.each(steps[current_step].split('\n\n'), function(_, par) {
+        $.each(steps[current_step].split(par_sep), function(_, par) {
             $step_text.append('<p>' + par + '</p>');
         });
     }

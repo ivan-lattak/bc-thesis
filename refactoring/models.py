@@ -23,7 +23,7 @@ class Step(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.text
+        return "{}: {}".format(self.serial_id, self.text)
 
     class Meta:
         unique_together = ('serial_id', 'exercise')

@@ -92,7 +92,7 @@ a.node {
 }
 
 #output {
-    font-family: "Consolas";
+    font-family: "Consolas", "Courier New", monospace;
 }
 
 .editor {

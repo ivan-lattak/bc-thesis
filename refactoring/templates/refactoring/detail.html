@@ -73,13 +73,20 @@ Práve vybraný session č.: <strong>{{ session.id }}</strong>
 <script>
 $(function() {
     var steps = [];
-    var current_step = 0;
+    var current_step;
+    if (window.localStorage.getItem('ex_step') === null) {
+        current_step = 0;
+    }
+    else {
+        current_step = parseInt(window.localStorage.getItem('ex_step'));
+    }
 
     function step_backward() {
         if (current_step == 0) {
             return;
         }
         current_step--;
+        window.localStorage.setItem('ex_step', current_step)
         update_step_text();
         update_buttons();
     }
@@ -88,6 +95,7 @@ $(function() {
             return;
         }
         current_step++;
+        window.localStorage.setItem('ex_step', current_step)
         update_step_text();
         update_buttons();
     }

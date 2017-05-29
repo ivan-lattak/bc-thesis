@@ -10,7 +10,7 @@ _RETURN_DIR = None
 
 COMPILE_CMD = ['make', '-s', '-j4']
 
-RUN_CMD = './main'
+RUN_CMD = ['firejail', '--quiet', '--', './main']
 TIMEOUT = 10
 
 CLEANUP_CMD = ['make', '-s', 'clean']
